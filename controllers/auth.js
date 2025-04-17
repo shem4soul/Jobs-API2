@@ -19,15 +19,19 @@ const login = async (req, res) => {
    }
   
    const user = await User.findOne({email})
-  
-   if (!user) {
+     if (!user) {
        throw new UnauthenticatedError('Inavalid Credentials')
    }
+
+   const isPasswordCorrect = await user.comparePassword(password)
+   if (!isPasswordCorrect) {
+      throw new UnauthenticatedError('Invalid Credentilas')
+   }
+   
  const token = user.createJWT()
  res.status(StatusCodes.OK).json({user: {name: user.name}, token})
 
 }
-
 
 module.exports = {
     register,
