@@ -1,0 +1,148 @@
+openapi: 3.0.0
+info:
+  title: Jobs API
+  version: 1.0.0
+  description: API for user authentication and job management
+
+servers:
+  - url: http://localhost:3000/api/v1
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Shittu
+                email:
+                  type: string
+                  format: email
+                  example: shem4soul@gmail.com
+                password:
+                  type: string
+                  example: secret
+      responses:
+        '201':
+          description: User registered successfully
+        '400':
+          description: Bad Request
+
+  /auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: shem4soul@gmail.com
+                password:
+                  type: string
+                  example: secret
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Unauthorized
+
+  /jobs:
+    post:
+      summary: Create a new job
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company:
+                  type: string
+                position:
+                  type: string
+      responses:
+        '201':
+          description: Job created successfully
+
+    get:
+      summary: Get all jobs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of jobs
+
+  /jobs/{id}:
+    get:
+      summary: Get a single job
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job details
+
+    patch:
+      summary: Update a job
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                company:
+                  type: string
+                  example: random
+                position:
+                  type: string
+                  example: data scientist
+      responses:
+        '200':
+          description: Job updated
+
+    delete:
+      summary: Delete a job
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Job deleted
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
